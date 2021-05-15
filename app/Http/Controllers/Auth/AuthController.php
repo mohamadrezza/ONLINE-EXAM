@@ -3,13 +3,15 @@
 namespace App\Http\Controllers\Auth;
 
 use App\User;
+use PasswordHash;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-   
+
     function register(Request $request)
     {
         try {
@@ -35,7 +37,46 @@ class AuthController extends Controller
             $token = auth()->login(User::find($user->id), true);
             return $this->respondWithToken($token);
         } catch (\Exception $e) {
+
+
             return $this->respondWithTemplate(false, null,  $e->getMessage());
         }
+    }
+    public function login(Request $request)
+    {
+        $token = $this->attemptLogin($request);
+
+        if (gettype($token) != 'string' && gettype($token) != 'boolean') {
+            return $token;
+        }
+        if (!$token) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        $response = $this->respondWithToken($token);
+
+        return $response;
+    }
+
+
+    private function attemptLogin(Request $request)
+    {
+
+        $request->validate([
+            'email' => 'required|email',
+            'password'=>'required'
+        ]);
+
+        $user = User::whereEmail($request->email)->first();
+        if (!$user) {
+            return $this->respondWithTemplate(false, [], 'کاربری یافت نشد');
+        }
+        $check=Hash::check($request->password, $user->password);
+
+        if (!$check) {
+            return false;
+        }
+
+        return auth()->login($user, true);
     }
 }

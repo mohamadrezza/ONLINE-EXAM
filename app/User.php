@@ -7,12 +7,11 @@ use Ramsey\Uuid\Uuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Tymon\JWTAuth\Contracts\JWTSubject;
-
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Authenticatable 
+class User extends Authenticatable implements JWTSubject
 {
     use HasFactory, Notifiable;
     use Uuids;
@@ -27,6 +26,16 @@ class User extends Authenticatable
         'password',
         'role'
     ];
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
+
     
     protected static function boot()
     {
