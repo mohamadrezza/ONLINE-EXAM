@@ -15,9 +15,11 @@ class CreateExamsTable extends Migration
     {
         Schema::create('exams', function (Blueprint $table) {
             $table->id();
-            $table->string('title')->index();
+            $table->unsignedInteger('lesson_id')->index();
             $table->uuid('teacher_id')->index();
+            $table->string('title')->index();
             $table->integer('duration');
+            $table->text('description')->nullable();
             $table->timestamp('started_at');
             $table->timestamp('finished_at');
             $table->timestamps();

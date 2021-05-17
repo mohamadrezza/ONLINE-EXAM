@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\User;
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use App\Lesson;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class LessonController extends Controller
 {
@@ -17,18 +17,29 @@ class LessonController extends Controller
             'teacherEmail' => 'required|string|email',
         ]);
 
-        $teacher = User::where('role', User::ROLE['teacher'])->whereEmail($request->teacherEmail)->firstOrFail();
+        $teacher = User::where('role', User::ROLE['teacher'])
+            ->whereEmail($request->teacherEmail)
+            ->firstOrFail();
 
         Lesson::create([
             'teacher_id' => $teacher->id,
             'title' => $request->title,
-            'started_at' => $request->timestamp ? Carbon::createFromTimestamp($request->timestamp) : null
+            // 'unit' => $request->unit,
+            'description' => $request->descripton
         ]);
+        return $this->respondWithTemplate(true, [], 'درس ثبت شد');
     }
     function getAll()
     {
-        $lessons = Lesson::query()->orderBy('created_at', 'desc')
-            ->paginate(20);
-        return $this->respondWithTemplate(true,[],$lessons);
+        try {
+            $lessons = Lesson::with(['teacher' => function ($q) {
+                return $q->select(['name']);
+            }])->orderBy('created_at', 'desc')
+                ->paginate(20);
+            return $this->respondWithTemplate(true, [], $lessons);
+        } catch (\Exception $e) {
+            return $this->respondWithTemplate(false, [], $e->getMessage());
+        }
     }
+    
 }

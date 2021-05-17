@@ -15,9 +15,9 @@ class CreateStudentAnswersTable extends Migration
     {
         Schema::create('student_answers', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('question_id')->index();
-            $table->uuid('student_id')->index();
-            $table->bigInteger('exam_id')->index();
+            $table->unsignedInteger('student_id')->index();
+            $table->unsignedInteger('exam_id')->index();
+            $table->unsignedInteger('question_id')->index();
             $table->text('answer')->nullable();
             $table->timestamps();
         });

@@ -11,6 +11,9 @@ Route::post('login', 'Auth\AuthController@login');
 Route::get('lessons', 'Auth\AuthController@login');
 Route::get('exams', 'Auth\AuthController@login');
 
+Route::get('test',function(){
+    return bcrypt('123456');
+});
 
 
 Route::group(['prefix' => 'lessons'], function () {
