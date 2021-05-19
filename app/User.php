@@ -14,7 +14,6 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 class User extends Authenticatable implements JWTSubject
 {
     use HasFactory, Notifiable;
-    use Uuids;
     /**
      * The attributes that are mass assignable.
      *
@@ -43,7 +42,7 @@ class User extends Authenticatable implements JWTSubject
         parent::boot();
 
         static::creating(function (Model $model) {
-            $model->setAttribute($model->getKeyName(), Uuid::uuid4());
+            $model->username = generateUniqueId(new User(), 'username');
         });
     }
     /**

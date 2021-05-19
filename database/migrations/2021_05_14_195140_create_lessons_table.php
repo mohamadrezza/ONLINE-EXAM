@@ -15,7 +15,7 @@ class CreateLessonsTable extends Migration
     {
         Schema::create('lessons', function (Blueprint $table) {
             $table->id();
-            $table->id('teacher_id')->index();
+            $table->unsignedInteger('teacher_id')->index();
             $table->string('title')->index();
             $table->integer('unit')->nullable();
             $table->string('description')->nullable();

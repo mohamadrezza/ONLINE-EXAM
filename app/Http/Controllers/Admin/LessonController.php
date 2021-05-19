@@ -19,14 +19,14 @@ class LessonController extends Controller
 
         $teacher = User::where('role', 'teacher')
             ->whereEmail($request->teacherEmail)
-            ->firstOrFail();
-
+            ->first();
+        if (!$teacher) return $this->respondWithTemplate(false, [], 'استاد مورد نظر ثبت شد');
         Lesson::create([
             'teacher_id' => $teacher->id,
             'title' => $request->title,
             'unit' => $request->unit,
             'description' => $request->descripton,
-            'cover'=>$request->cover
+            'cover' => $request->cover
         ]);
         return $this->respondWithTemplate(true, [], 'درس ثبت شد');
     }
@@ -42,5 +42,4 @@ class LessonController extends Controller
             return $this->respondWithTemplate(false, [], $e->getMessage());
         }
     }
-    
 }

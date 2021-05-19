@@ -22,6 +22,10 @@ class AuthController extends Controller
                 'role' => 'required|string'
             ]);
             $email = $request->email;
+
+            if (!in_array($request->role, ['student', 'teacher']))
+                return $this->respondWithTemplate(false, null, 'سوزنم فکر میکرد تیزه',406);
+
             if (User::where('email', $email)->exists()) {
                 return $this->respondWithTemplate(false, null, 'این ایمیل توسط کاربر دیگری ثبت شده است ');
             }
@@ -30,7 +34,7 @@ class AuthController extends Controller
             $user = User::create([
                 'name' => $request->name,
                 'email' => $email,
-                'role' => User::ROLE[$request->role],
+                'role' => $request->role,
                 'password' => bcrypt($request->password)
             ]);
 
@@ -64,14 +68,14 @@ class AuthController extends Controller
 
         $request->validate([
             'email' => 'required|email',
-            'password'=>'required'
+            'password' => 'required'
         ]);
 
         $user = User::whereEmail($request->email)->first();
         if (!$user) {
             return $this->respondWithTemplate(false, [], 'کاربری یافت نشد');
         }
-        $check=Hash::check($request->password, $user->password);
+        $check = Hash::check($request->password, $user->password);
 
         if (!$check) {
             return false;
