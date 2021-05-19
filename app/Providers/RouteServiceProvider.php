@@ -77,6 +77,7 @@ class RouteServiceProvider extends ServiceProvider
             ->namespace($this->namespace)
             ->group(function () {
                 require_once base_path('routes/v1/app.php');
+                require_once base_path('routes/v1/admin.php');
             });
 
 

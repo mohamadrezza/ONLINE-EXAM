@@ -19,6 +19,7 @@ class CreateLessonsTable extends Migration
             $table->string('title')->index();
             $table->integer('unit')->nullable();
             $table->string('description')->nullable();
+            $table->string('cover')->nullable();
             $table->timestamps();
         });
     }

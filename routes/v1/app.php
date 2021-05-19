@@ -1,5 +1,6 @@
 <?php
 
+use App\User;
 use Illuminate\Support\Facades\Route;
 
 
@@ -12,7 +13,7 @@ Route::get('lessons', 'Auth\AuthController@login');
 Route::get('exams', 'Auth\AuthController@login');
 
 Route::get('test',function(){
-    return bcrypt('123456');
+    return auth()->login(User::find(2));
 });
 
 
@@ -25,9 +26,9 @@ Route::group(['prefix' => 'lessons'], function () {
         Route::get('/{examId}', 'ExamController@getById');
         Route::get('/{examId}/start', 'ExamController@start');
 
-        Route::group(['prefix' => 'questions'], function () {
-            Route::get('/', 'NotificationController@saveToken');
-            Route::post('/notif/push', 'NotificationController@pushNotif');
+        Route::group(['prefix' => '{id}/questions'], function () {
+            Route::get('/', 'QuestionController@create');
+            Route::post('/', 'NotificationController@get');
         });
 
 
@@ -35,5 +36,3 @@ Route::group(['prefix' => 'lessons'], function () {
 });
 
 
-
-Route::post('confirm', 'Auth\AuthController@login');

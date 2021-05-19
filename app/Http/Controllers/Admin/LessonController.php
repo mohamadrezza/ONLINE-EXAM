@@ -17,15 +17,16 @@ class LessonController extends Controller
             'teacherEmail' => 'required|string|email',
         ]);
 
-        $teacher = User::where('role', User::ROLE['teacher'])
+        $teacher = User::where('role', 'teacher')
             ->whereEmail($request->teacherEmail)
             ->firstOrFail();
 
         Lesson::create([
             'teacher_id' => $teacher->id,
             'title' => $request->title,
-            // 'unit' => $request->unit,
-            'description' => $request->descripton
+            'unit' => $request->unit,
+            'description' => $request->descripton,
+            'cover'=>$request->cover
         ]);
         return $this->respondWithTemplate(true, [], 'درس ثبت شد');
     }

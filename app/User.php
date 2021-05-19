@@ -55,11 +55,6 @@ class User extends Authenticatable implements JWTSubject
         'password',
         'remember_token',
     ];
-    const ROLE = [
-        'student' => 1,
-        'teacher' => 2,
-        'admin' => 3,
-    ];
 
     /**
      * The attributes that should be cast to native types.
