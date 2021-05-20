@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exam;
 use App\Question;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -45,11 +46,5 @@ class QuestionController extends Controller
         return $this->respondWithTemplate(true, [], 'تایید شد');
 
     }
-    function selectExamQuestions(Request $request)
-    {
-        $request->validate([
-            'questions' => 'required|array'
-        ]);
-        $questionIds = $request->questions;
-    }
+
 }

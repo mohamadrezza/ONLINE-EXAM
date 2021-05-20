@@ -1,10 +1,11 @@
 <?php
 
+use App\Question;
 use App\User;
 use Illuminate\Support\Facades\Route;
 
 
-####################### Auth ############################
+####################### Auth ###########################
 Route::post('register', "Auth\AuthController@register");
 Route::post('login', 'Auth\AuthController@login');
 ########################################################
@@ -22,24 +23,27 @@ Route::group(['prefix' => 'lessons'], function () {
         Route::post('/', 'QuestionController@create')->middleware('auth');
         Route::put('/{questionId}/accept', 'QuestionController@accept')->middleware('TeacherRole');
 
-        ######################### Answers ###########################
+        ######################### Answers ########################
         Route::group(['prefix' => '/{questionId}/answers'], function () {
             Route::post('/', 'AnswerController@create')->middleware('auth');
         });
-        #############################################################
+        ##########################################################
     });
 
     ######################### Exams ###########################
     Route::group(['prefix' => '/{id}/exams'], function () {
-        Route::post('/', 'ExamController@create')->middleware('auth');
-        Route::get('/', 'ExamController@create')->middleware('auth');
-
+        Route::post('/', 'ExamController@create')->middleware('TeacherRole');
+        Route::post('/{examId}/questions', 'ExamController@selectExamQuestions')->middleware('TeacherRole');
     });
-    #############################################################
+    ###########################################################
 });
 
 
+
 Route::get('test', function () {
+
+    return now()->addDays(1)->timestamp;
+    return Question::whereId('4')->with('answers')->get();
     return auth()->login(User::find(8));
     $x = ['a', 'b'];
     dd(in_array('c', $x));
