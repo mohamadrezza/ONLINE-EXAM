@@ -20,4 +20,9 @@ class Question extends Model
     {
         return $this->belongsTo(User::class,'user_id');
     }
+
+    function answers()
+    {
+        return $this->belongsTo(QuestionAnswers::class,'question_id');
+    }
 }
