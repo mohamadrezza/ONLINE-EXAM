@@ -18,7 +18,9 @@ class TeacherRole
      */
     public function handle(Request $request, Closure $next)
     {
-        User::where('role',User::ROLE['teacher'])->where('id',Auth::id())->firstOrFail();
+        User::where('role', 'teacher')
+            ->where('id', Auth::id())
+            ->firstOrFail();
         return $next($request);
     }
 }

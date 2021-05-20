@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Question;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class QuestionController extends Controller
 {
@@ -32,11 +33,16 @@ class QuestionController extends Controller
             ->paginate(20);
         return $questions;
     }
-    // function getQuestionsByExamId($id)
-    // {
-    // }
-    function acceptQuestionByTeacherById($id)
+
+    function acceptQuestionByQuestionId($id, $questionId)
     {
+        $question = Question::where('lesson_id', $id)
+            ->where('id', $questionId)->firstOrFail();
+        $question->update([
+            'is_accepted' => 1
+        ]);
+        return $this->respondWithTemplate(true, [], 'تایید شد');
+
     }
     function selectExamQuestions(Request $request)
     {
