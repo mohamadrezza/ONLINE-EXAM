@@ -18,9 +18,10 @@ class TeacherRole
      */
     public function handle(Request $request, Closure $next)
     {
-        User::where('role', 'teacher')
+        $teacher = User::where('role', 'teacher')
             ->where('id', Auth::id())
-            ->firstOrFail();
+            ->exists();
+        if (!$teacher) abort(403);
         return $next($request);
     }
 }

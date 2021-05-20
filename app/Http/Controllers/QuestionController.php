@@ -34,10 +34,11 @@ class QuestionController extends Controller
         return $questions;
     }
 
-    function acceptQuestionByQuestionId($id, $questionId)
+    function accept($id, $questionId)
     {
         $question = Question::where('lesson_id', $id)
-            ->where('id', $questionId)->firstOrFail();
+            ->where('id', $questionId)
+            ->firstOrFail();
         $question->update([
             'is_accepted' => 1
         ]);
