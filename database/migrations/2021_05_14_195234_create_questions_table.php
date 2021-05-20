@@ -17,9 +17,8 @@ class CreateQuestionsTable extends Migration
             $table->id();
             $table->unsignedInteger('lesson_id')->index();
             $table->unsignedInteger('user_id')->index();
-            $table->boolean('is_accepted');
+            $table->boolean('is_accepted')->default(0);
             $table->text('question_text');
-            $table->text('answer');
             $table->text('attachment')->nullable();
             $table->timestamps();
         });

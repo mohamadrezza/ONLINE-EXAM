@@ -14,21 +14,22 @@ class AuthController extends Controller
 
     function register(Request $request)
     {
+
         try {
             $request->validate([
                 'email' => 'required|email',
-                'password' => 'required|string',
+                'password' => 'required|min:5',
                 'name' => 'required|string',
                 'role' => 'required|string'
             ]);
             $email = $request->email;
-
             if (!in_array($request->role, ['student', 'teacher']))
                 return $this->respondWithTemplate(false, null, 'سوزنم فکر میکرد تیزه',406);
 
             if (User::where('email', $email)->exists()) {
                 return $this->respondWithTemplate(false, null, 'این ایمیل توسط کاربر دیگری ثبت شده است ');
             }
+
 
 
             $user = User::create([

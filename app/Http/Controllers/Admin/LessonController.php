@@ -12,6 +12,7 @@ class LessonController extends Controller
 {
     function create(Request $request)
     {
+
         $request->validate([
             'title' => 'required|string',
             'teacherEmail' => 'required|string|email',
@@ -25,7 +26,7 @@ class LessonController extends Controller
             'teacher_id' => $teacher->id,
             'title' => $request->title,
             'unit' => $request->unit,
-            'description' => $request->descripton,
+            'description' => $request->description,
             'cover' => $request->cover
         ]);
         return $this->respondWithTemplate(true, [], 'درس ثبت شد');
