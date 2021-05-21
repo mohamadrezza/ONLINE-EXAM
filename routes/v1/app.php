@@ -1,7 +1,9 @@
 <?php
 
-use App\Question;
+use App\Exam;
+use App\Http\Resources\QuizResource;
 use App\User;
+use App\Question;
 use Illuminate\Support\Facades\Route;
 
 
@@ -34,6 +36,11 @@ Route::group(['prefix' => 'lessons'], function () {
     Route::group(['prefix' => '/{id}/exams'], function () {
         Route::post('/', 'ExamController@create')->middleware('TeacherRole');
         Route::post('/{examId}/questions', 'ExamController@selectExamQuestions')->middleware('TeacherRole');
+
+        Route::get('/{examId}/start','ExamController@start')->middleware('auth');
+
+        Route::post('/{examId}/start','ExamController@finish')->middleware('auth');
+
     });
     ###########################################################
 });
@@ -41,11 +48,4 @@ Route::group(['prefix' => 'lessons'], function () {
 
 
 Route::get('test', function () {
-
-    return now()->addDays(1)->timestamp;
-    return Question::whereId('4')->with('answers')->get();
-    return auth()->login(User::find(8));
-    $x = ['a', 'b'];
-    dd(in_array('c', $x));
-    return auth()->login(User::find(2));
 });
