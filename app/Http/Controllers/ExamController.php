@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use App\Services\Exam\ExamService;
 use App\Http\Resources\QuizResource;
 use App\Jobs\InsertAnswers;
+use App\QuestionAnswers;
 use App\StudentAnswer;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -134,14 +135,12 @@ class ExamController extends Controller
 
     function result($lessonId, $examId)
     {
-        $answers = StudentAnswer::join(
-            'question_answers',
-            'question_answers.question_id',
-            '=',
-            'student_answers.question_id'
-        )
-        ->select('question_answers.is_correct','question_answers.')
-        ->where('student_id', auth()->id());
-        return $answers->get();
+        $userId = Auth::id();
+        $studentAnswers = StudentAnswer::where('user_id', $userId)
+            ->where('exam_id', $examId)
+            ->pluck('answers');
+        $correctAnswers = QuestionAnswers::where('exam_id', $examId)
+            ->whereIn('answers', $studentAnswers)->sum('is_correct');
+        return $correctAnswers;
     }
 }
