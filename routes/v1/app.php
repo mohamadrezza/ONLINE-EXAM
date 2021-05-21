@@ -4,6 +4,7 @@ use App\Exam;
 use App\Http\Resources\QuizResource;
 use App\User;
 use App\Question;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 
@@ -39,7 +40,9 @@ Route::group(['prefix' => 'lessons'], function () {
 
         Route::get('/{examId}/start','ExamController@start')->middleware('auth');
 
-        Route::post('/{examId}/start','ExamController@finish')->middleware('auth');
+        Route::post('/{examId}/finish','ExamController@finish')->middleware('auth');
+        Route::get('/{examId}/result','ExamController@result')->middleware('auth');
+
 
     });
     ###########################################################
@@ -47,5 +50,8 @@ Route::group(['prefix' => 'lessons'], function () {
 
 
 
-Route::get('test', function () {
+Route::post('test', function (Request $req) {
+    $data=$req->questions;
+    $x=collect($data)->put('user_id',3937);
+    return $x;
 });

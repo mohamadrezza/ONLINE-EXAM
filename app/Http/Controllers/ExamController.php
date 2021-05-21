@@ -11,6 +11,7 @@ use App\Helpers\Constants;
 use Illuminate\Http\Request;
 use App\Services\Exam\ExamService;
 use App\Http\Resources\QuizResource;
+use App\Jobs\InsertAnswers;
 use App\StudentAnswer;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -97,10 +98,10 @@ class ExamController extends Controller
             return $this->respondWithTemplate(false, [], $e->getMessage());
         }
     }
-    function finish($lessonId, $examId,Request $request)
+    function finish($lessonId, $examId, Request $request)
     {
         $request->validate([
-            'answers'=>'required|array'
+            'answers' => 'required|array'
         ]);
         $exam = Exam::whereId($examId)
             ->where('lesson_id', $lessonId)
@@ -109,8 +110,9 @@ class ExamController extends Controller
         $examSession = ExamSession::where('exam_id', $examId)
             ->where('student_id', Auth::id())
             ->firstOrFail();
+        DB::beginTransaction();
+
         try {
-            DB::beginTransaction();
 
             $examFinishTime = Carbon::parse($exam->finished_at)
                 ->addMinutes(Constants::EXAM_EXTRA_TIME);
@@ -121,13 +123,25 @@ class ExamController extends Controller
                 'finished_at' => now()
             ]);
 
-            DB::table('student_answers')->insert();
+            dispatch(new InsertAnswers($request->answers, Auth::id(), $examId));
 
             DB::commit();
-
         } catch (\Exception $e) {
             DB::rollback();
             return $this->respondWithTemplate(false, [], $e->getMessage());
         }
+    }
+
+    function result($lessonId, $examId)
+    {
+        $answers = StudentAnswer::join(
+            'question_answers',
+            'question_answers.question_id',
+            '=',
+            'student_answers.question_id'
+        )
+        ->select('question_answers.is_correct','question_answers.')
+        ->where('student_id', auth()->id());
+        return $answers->get();
     }
 }
