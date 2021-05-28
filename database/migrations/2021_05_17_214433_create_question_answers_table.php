@@ -17,6 +17,7 @@ class CreateQuestionAnswersTable extends Migration
             $table->id();
             $table->unsignedInteger('question_id')->index();
             $table->text('answer');
+            $table->string('hash')->index()->unique();
             $table->boolean('is_correct')->index();
             $table->timestamps();
         });

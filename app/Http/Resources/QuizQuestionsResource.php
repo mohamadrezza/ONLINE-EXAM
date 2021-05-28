@@ -17,7 +17,9 @@ class QuizQuestionsResource extends JsonResource
         return [
             'id'=>$this->id,
             'question'=>$this->question_text,
-            'answers'=>$this->answers->pluck('answer')
+            'answers' => $this->answers->map(function ($i) {
+                return ['text' => $i->answer, 'hash' => $i->hash];
+            }),
         ];
     }
 }

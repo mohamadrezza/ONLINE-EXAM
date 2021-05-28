@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Question extends Model
 {
     use HasFactory;
+    
     protected $fillable=[
         'lesson_id',
         'user_id',
@@ -23,6 +24,6 @@ class Question extends Model
 
     function answers()
     {
-        return $this->hasMany(QuestionAnswers::class,'question_id');
+        return $this->hasMany(QuestionAnswers::class,'question_id')->inRandomOrder();
     }
 }

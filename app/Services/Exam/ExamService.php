@@ -22,8 +22,8 @@ class ExamService
 
     function checkExamAvailability()
     {
-        $this->checkTime();
-        $this->canUserTakeExam();
+        // $this->checkTime();
+        // $this->canUserTakeExam();
     }
 
     private function checkTime()
