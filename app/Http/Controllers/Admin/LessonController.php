@@ -35,10 +35,11 @@ class LessonController extends Controller
     {
         try {
             $lessons = Lesson::with(['teacher' => function ($q) {
-                return $q->select(['name']);
+                return $q->select('name','id');
             }])->orderBy('created_at', 'desc')
-                ->paginate(20);
-            return $this->respondWithTemplate(true, [], $lessons);
+                ->paginate(20)
+                ;
+            return $this->respondWithTemplate(true,  $lessons);
         } catch (\Exception $e) {
             return $this->respondWithTemplate(false, [], $e->getMessage());
         }
