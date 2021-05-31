@@ -132,7 +132,7 @@ class ExamController extends Controller
         }
     }
 
-    function result($lessonId, $examId)
+    function getResult($lessonId, $examId)
     {
         $userId = Auth::id();
         $studentAnswers = StudentAnswer::where('student_id', $userId)
@@ -141,6 +141,10 @@ class ExamController extends Controller
         $correctAnswers = QuestionAnswers::whereIn('hash', $studentAnswers)
             ->sum('is_correct');
         return $correctAnswers;
+    }
+    function allResults($lessonId)
+    {
+
     }
 }
 
