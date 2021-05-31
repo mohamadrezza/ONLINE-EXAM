@@ -115,11 +115,10 @@ class ExamController extends Controller
 
         try {
 
-            $examFinishTime = Carbon::parse($exam->finished_at)
-                ->addMinutes(Constants::EXAM_EXTRA_TIME);
-            if (now() > $examFinishTime)
-                return $this->respondWithTemplate(false, [], 'too late too late', 406);
-
+            // $examFinishTime = Carbon::parse($exam->finished_at)
+            //     ->addMinutes(Constants::EXAM_EXTRA_TIME);
+            // if (now() > $examFinishTime)
+            //     return $this->respondWithTemplate(false, [], 'too late too late', 406);
             $examSession->update([
                 'finished_at' => now()
             ]);
@@ -136,11 +135,12 @@ class ExamController extends Controller
     function result($lessonId, $examId)
     {
         $userId = Auth::id();
-        $studentAnswers = StudentAnswer::where('user_id', $userId)
+        $studentAnswers = StudentAnswer::where('student_id', $userId)
             ->where('exam_id', $examId)
-            ->pluck('answers');
-        $correctAnswers = QuestionAnswers::where('exam_id', $examId)
-            ->whereIn('answers', $studentAnswers)->sum('is_correct');
+            ->pluck('answer_hash');
+        $correctAnswers = QuestionAnswers::whereIn('hash', $studentAnswers)
+            ->sum('is_correct');
         return $correctAnswers;
     }
 }
+

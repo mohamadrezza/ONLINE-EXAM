@@ -42,7 +42,7 @@ class InsertAnswers implements ShouldQueue
                 'student_id'=>$this->userId,
                 'question_id'=>$record['id'],
                 'exam_id'=>$this->examId,
-                'answer'=>$record['answer'],
+                'answer_hash'=>$record['hash'],
             ]);
 
         }

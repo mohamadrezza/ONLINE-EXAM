@@ -21,6 +21,7 @@ class AnswerController extends Controller
         try {
             foreach ($request->answers as $answer) {
                 QuestionAnswers::create([
+                    
                     'question_id' => $questionId,
                     'is_correct' => $answer['is_correct'],
                     'answer' => $answer['answer']

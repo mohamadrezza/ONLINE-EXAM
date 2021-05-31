@@ -19,6 +19,7 @@ class CreateStudentAnswersTable extends Migration
             $table->unsignedInteger('exam_id')->index();
             $table->unsignedInteger('question_id')->index();
             $table->text('answer')->nullable();
+            $table->string('answer_hash')->index()->unique();
             $table->timestamps();
         });
     }
