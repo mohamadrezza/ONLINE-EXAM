@@ -54,7 +54,7 @@ Route::group(['prefix' => 'lessons'], function () {
 
 
 Route::get('test', function (Request $req) {
-    return auth()->login(User::find(3));
+    return auth()->login(User::find(11));
     $data=$req->questions;
     $x=collect($data)->put('user_id',3937);
     return $x;
