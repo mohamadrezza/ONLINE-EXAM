@@ -29,10 +29,13 @@ Route::group(['prefix' => 'lessons'], function () {
         ######################### Answers ########################
         Route::group(['prefix' => '/{questionId}/answers'], function () {
             Route::post('/', 'AnswerController@create')->middleware('auth');
+            Route::get('/', 'AnswerController@get')->middleware('auth');
+
         });
         ##########################################################
     });
 
+    //ina test she  
     ######################### Exams ###########################
     Route::group(['prefix' => '/{id}/exams'], function () {
         Route::post('/', 'ExamController@create')->middleware('TeacherRole');

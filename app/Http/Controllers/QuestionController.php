@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Exam;
+use App\Http\Resources\LessonQuestionsResource;
+use App\Lesson;
 use App\Question;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -23,7 +25,7 @@ class QuestionController extends Controller
             ]);
             return $this->respondWithTemplate(true, [], 'سوال شما ثبت شد, درصورت صلاح دید استاد تایید میشود');
         } catch (\Exception $e) {
-            return $this->respondWithTemplate(false, [], $e);
+            return $this->respondWithTemplate(false, [], $e->getMessage());
         }
     }
     function getAllByLessonId($id, Request $request)
@@ -32,19 +34,20 @@ class QuestionController extends Controller
             ->with('user')
             ->orderBy('created_at', $request->order ?? 'desc')
             ->paginate(20);
-        return $questions;
+        $data = LessonQuestionsResource::collection($questions);
+        return $this->respondWithTemplate(true, $data);
     }
 
     function accept($id, $questionId)
     {
-        $question = Question::where('lesson_id', $id)
-            ->where('id', $questionId)
+        Lesson::where('id', $id)
+            ->where('teacher_id', auth()->id())
+            ->firstOrFail();
+        $question = Question::where('id', $questionId)
             ->firstOrFail();
         $question->update([
             'is_accepted' => 1
         ]);
         return $this->respondWithTemplate(true, [], 'تایید شد');
-
     }
-
 }
