@@ -14,7 +14,7 @@ class LessonController extends Controller
             ->latest('created_at')
             ->paginate();
 
-        return $this->respondWithTemplate(true, [], $lessons);
+        return $this->respondWithTemplate(true,  $lessons);
     }
     function getById($id)
     {
@@ -28,7 +28,7 @@ class LessonController extends Controller
                 return $q->select(['id', 'name']);
             }])->orderBy('created_at', 'desc')
                 ->paginate(20);
-            return $this->respondWithTemplate(true, [], $lessons);
+            return $this->respondWithTemplate(true,$lessons);
         } catch (\Exception $e) {
             return $this->respondWithTemplate(false, [], $e->getMessage());
         }
