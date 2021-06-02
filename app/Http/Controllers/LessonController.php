@@ -12,9 +12,9 @@ class LessonController extends Controller
     {
         $lessons = Lesson::where('teacher_id', Auth::id())
             ->latest('created_at')
-            ->paginate();
+            ->paginate(10);
 
-        return $this->respondWithTemplate(true,  $lessons);
+        return $this->respondWithTemplate(true, $lessons);
     }
     function getById($id)
     {
@@ -28,7 +28,7 @@ class LessonController extends Controller
                 return $q->select(['id', 'name']);
             }])->orderBy('created_at', 'desc')
                 ->paginate(20);
-            return $this->respondWithTemplate(true,$lessons);
+            return $this->respondWithTemplate(true,  $lessons);
         } catch (\Exception $e) {
             return $this->respondWithTemplate(false, [], $e->getMessage());
         }

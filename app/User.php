@@ -14,6 +14,8 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 class User extends Authenticatable implements JWTSubject
 {
     use HasFactory, Notifiable;
+    protected $guard_name = 'web';
+
     /**
      * The attributes that are mass assignable.
      *

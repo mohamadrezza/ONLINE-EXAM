@@ -16,6 +16,7 @@ use App\QuestionAnswers;
 use App\StudentAnswer;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ExamController extends Controller
 {
@@ -35,13 +36,14 @@ class ExamController extends Controller
                 'lesson_id' => $lessonId,
                 'teacher_id' => Auth::id(),
                 'duration' => $request->duration,
+                "description"=>$request->description,
                 'started_at' => Carbon::createFromTimestamp($request->startedAt),
                 'title' => $request->title,
                 'finished_at' => Carbon::createFromTimestamp($request->startedAt)->addMinutes($request->duration)
             ]);
             return $this->respondWithTemplate(true, [], 'امتحان ثبت شد');
         } catch (\Exception $e) {
-            return $this->respondWithTemplate(false, [], $e);
+            return $this->respondWithTemplate(false, [], $e->getMessage());
         }
     }
     function selectExamQuestions($lessonId, $examId, Request $request)
@@ -54,7 +56,6 @@ class ExamController extends Controller
         $exam = Exam::where('lesson_id', $lessonId)
             ->where('id', $examId)->firstOrFail();
         try {
-            //for more Assurance about inputs
             $questionIds = Question::whereIn('id', $request->questions)
                 ->where('is_accepted', 1)
                 ->pluck('id');
@@ -62,7 +63,7 @@ class ExamController extends Controller
             $exam->questions()->syncWithoutDetaching($questionIds);
             return $this->respondWithTemplate(true, [], 'سوالات امتحان ثبت شد');
         } catch (\Exception $e) {
-            return $this->respondWithTemplate(false, [], $e);
+            return $this->respondWithTemplate(false, [], $e->getMessage());
         }
     }
 

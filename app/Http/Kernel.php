@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\JwtMiddleware;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -63,6 +64,7 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'AdminRole'=>\App\Http\Middleware\AdminRole::class,
         'TeacherRole'=>\App\Http\Middleware\TeacherRole::class,
+        'jwt.verify' => \App\Http\Middleware\JwtMiddleware::class,
 
     ];
 }

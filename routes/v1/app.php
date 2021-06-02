@@ -30,10 +30,13 @@ Route::group(['prefix' => 'lessons'], function () {
         ######################### Answers ########################
         Route::group(['prefix' => '/{questionId}/answers'], function () {
             Route::post('/', 'AnswerController@create')->middleware('auth');
+            Route::get('/', 'AnswerController@get')->middleware('auth');
+
         });
         ##########################################################
     });
 
+    //ina test she  
     ######################### Exams ###########################
     Route::group(['prefix' => '/{id}/exams'], function () {
         Route::post('/', 'ExamController@create')->middleware('TeacherRole');
@@ -50,8 +53,8 @@ Route::group(['prefix' => 'lessons'], function () {
 
 
 Route::get('test', function (Request $req) {
-    return auth()->login(User::find(3));
-    $data = $req->questions;
-    $x = collect($data)->put('user_id', 3937);
+    return auth()->login(User::find(11));
+    $data=$req->questions;
+    $x=collect($data)->put('user_id',3937);
     return $x;
 });

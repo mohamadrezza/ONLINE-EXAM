@@ -23,11 +23,19 @@ class AnswerController extends Controller
                 QuestionAnswers::create([
                     
                     'question_id' => $questionId,
-                    'is_correct' => $answer['is_correct'],
+                    'is_correct' => $answer['isCorrect'],
                     'answer' => $answer['answer']
                 ]);
             }
             return $this->respondWithTemplate(true, [], 'پاسخ سوالات ثبت شد');
+        } catch (\Exception $e) {
+            return $this->respondWithTemplate(false, [], $e);
+        }
+    }
+    function get($id, $questionId){
+        try {
+            $answers = QuestionAnswers::where('question_id',$questionId)->get();
+            return $answers;
         } catch (\Exception $e) {
             return $this->respondWithTemplate(false, [], $e);
         }
