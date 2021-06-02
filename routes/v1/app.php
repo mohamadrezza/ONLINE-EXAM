@@ -7,7 +7,6 @@ use App\Question;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-#Tested
 ####################### Auth ###########################
 Route::post('register', "Auth\AuthController@register");
 Route::post('login', 'Auth\AuthController@login');

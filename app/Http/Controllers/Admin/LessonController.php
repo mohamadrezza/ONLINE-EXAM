@@ -7,6 +7,7 @@ use App\Lesson;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\LessonsResource;
 
 class LessonController extends Controller
 {
@@ -21,7 +22,7 @@ class LessonController extends Controller
         $teacher = User::where('role', 'teacher')
             ->whereEmail($request->teacherEmail)
             ->first();
-        if (!$teacher) return $this->respondWithTemplate(false, [], 'استاد مورد نظر ثبت شد');
+        if (!$teacher) return $this->respondWithTemplate(false, [], 'استاد مورد نظر پیدا نشد');
         Lesson::create([
             'teacher_id' => $teacher->id,
             'title' => $request->title,
@@ -31,15 +32,28 @@ class LessonController extends Controller
         ]);
         return $this->respondWithTemplate(true, [], 'درس ثبت شد');
     }
-    function getAll()
+    function getAll(Request $request)
     {
         try {
-            $lessons = Lesson::with(['teacher' => function ($q) {
-                return $q->select('name','id');
-            }])->orderBy('created_at', 'desc')
-                ->paginate(20)
-                ;
-            return $this->respondWithTemplate(true,  $lessons);
+            $lessons = Lesson::when($request->title, function ($q, $title) {
+                return $q->where('title', $title);
+            })->with(['teacher' => function ($q) {
+                return $q->select('name', 'id');
+            }]);
+            if ($request->has('teacher')) {
+                $teachers = User::where('role', 'teacher')->where('name', 'like', "%" . $request['teacher'] . "%")
+                    ->orWhere('email', $request['teacher'])
+                    ->get();
+                 $lessons->whereIn('teacher_id', $teachers);
+            }
+
+
+            $result = $lessons
+                ->orderBy('created_at', $request->order ?? 'desc')
+                ->paginate($request->perPage ?? 20);
+
+
+            return $this->respondWithTemplate(true, LessonsResource::collection($result));
         } catch (\Exception $e) {
             return $this->respondWithTemplate(false, [], $e->getMessage());
         }
