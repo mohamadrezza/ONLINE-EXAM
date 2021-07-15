@@ -2,6 +2,10 @@
 
 namespace App\Jobs;
 
+use App\StudentAnswer;
+use App\StudentResult;
+use App\QuestionAnswers;
+use Illuminate\Support\Arr;
 use Illuminate\Bus\Queueable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Queue\SerializesModels;
@@ -21,13 +25,12 @@ class InsertAnswers implements ShouldQueue
      */
     public $tries = 2;
 
-    private $data,$userId,$examId;
-    public function __construct($data, $userId,$examId)
+    private $data, $userId, $examId;
+    public function __construct($data, $userId, $examId)
     {
-        $this->data=$data;
-        $this->userId=$userId;
-        $this->examId=$examId;
-
+        $this->data = $data;
+        $this->userId = $userId;
+        $this->examId = $examId;
     }
 
     /**
@@ -37,6 +40,7 @@ class InsertAnswers implements ShouldQueue
      */
     public function handle()
     {
+        $hash = [];
         foreach ($this->data as $record) {
             DB::table('student_answers')->insert([
                 'student_id'=>$this->userId,
@@ -44,7 +48,13 @@ class InsertAnswers implements ShouldQueue
                 'exam_id'=>$this->examId,
                 'answer_hash'=>$record['hash'],
             ]);
-
         }
+        StudentResult::create([
+            'exam_id' => $this->examId,
+            'student_id' => $this->userId,
+            'result' => QuestionAnswers::whereIn('question_id',Arr::pluck($this->data, 'id'))
+                ->whereIn('hash', Arr::pluck($this->data, 'hash'))
+                ->sum('is_correct')
+        ]);
     }
 }

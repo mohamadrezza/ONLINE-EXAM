@@ -16,6 +16,7 @@ Route::post('login', 'Auth\AuthController@login');
 
 
 Route::group(['prefix' => 'lessons'], function () {
+    #Tested
     Route::get('/', 'LessonController@getAll');
     Route::get('/{id}', 'LessonController@getById');
 

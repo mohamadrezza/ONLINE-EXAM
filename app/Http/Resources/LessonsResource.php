@@ -19,7 +19,7 @@ class LessonsResource extends JsonResource
             'id'=>$this->id,
             'title'=>$this->title,
             'teacher'=>new UserResource($this->teacher),
-            'createdAt'=>$this->created_at->timestamp,
+            'cover'=>$this->cover
         ];
     }
 }
