@@ -18,17 +18,19 @@ class LessonController extends Controller
     }
     function getById($id)
     {
-        $lesson = Lesson::where('id', $id)->firstOrFail();
-        return $lesson;
+        $lesson = Lesson::where('id', $id)->with(['teacher' => function ($q) {
+            return $q->select(['id', 'name']);
+        }])->firstOrFail();
+        return $this->respondWithTemplate(true, $lesson);
     }
     function getAll()
     {
         try {
             $lessons = Lesson::with(['teacher' => function ($q) {
                 return $q->select(['id', 'name']);
-            }])->orderBy('created_at', 'desc')
+            }])
                 ->paginate(20);
-            return $this->respondWithTemplate(true,  $lessons);
+            return $this->respondWithTemplate(true, $lessons);
         } catch (\Exception $e) {
             return $this->respondWithTemplate(false, [], $e->getMessage());
         }

@@ -25,13 +25,19 @@ class ExamService
         // $this->checkTime();
         // $this->canUserTakeExam();
     }
-
+    public function canUserFinishExam()
+    {
+        $examFinishTime = Carbon::parse($this->exam->finished_at)
+            ->addMinutes(Constants::EXAM_EXTRA_TIME);
+        if (now() > $examFinishTime)
+            throw new Exception('too late too late');
+    }
     private function checkTime()
     {
         if (
-            now() < $this->exam->finished_at ||
-            now() > Carbon::parse($this->exam->started_at)
-            ->subMinutes(Constants::EXAM_EXTRA_TIME)
+            now() > $this->exam->finished_at ||
+            now() < Carbon::parse($this->exam->started_at)
+
         )
             throw new Exception('لطفا در زمان امتحان حاضر شوید');
     }
@@ -45,7 +51,10 @@ class ExamService
             ->where('exam_id', $this->exam->id)
             ->count();
 
-        if ($finishedSession || $examSessionCount >= Constants::TIMES_ALLOWED_PARTICIPATE_TEST)
+        if (
+            $finishedSession ||
+            $examSessionCount >= Constants::TIMES_ALLOWED_PARTICIPATE_TEST
+        )
             throw new Exception('شما دیگر مجاز به شرکت در امتحان نیستید');
     }
 }

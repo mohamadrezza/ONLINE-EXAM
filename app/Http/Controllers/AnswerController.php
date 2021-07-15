@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Question;
 use App\QuestionAnswers;
 use Illuminate\Http\Request;
+use App\Http\Resources\QuestionAnswersResource;
 
 class AnswerController extends Controller
 {
@@ -35,7 +36,8 @@ class AnswerController extends Controller
     function get($id, $questionId){
         try {
             $answers = QuestionAnswers::where('question_id',$questionId)->get();
-            return $answers;
+            $data=QuestionAnswersResource::collection($answers);
+            return $this->respondWithTemplate(true,$data);
         } catch (\Exception $e) {
             return $this->respondWithTemplate(false, [], $e);
         }

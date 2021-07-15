@@ -33,7 +33,7 @@ class QuestionController extends Controller
         $questions = Question::where('lesson_id', $id)
             ->with('user')
             ->orderBy('created_at', $request->order ?? 'desc')
-            ->paginate(20);
+            ->paginate($request->perPage ?? 20);
         $data = LessonQuestionsResource::collection($questions);
         return $this->respondWithTemplate(true, $data);
     }

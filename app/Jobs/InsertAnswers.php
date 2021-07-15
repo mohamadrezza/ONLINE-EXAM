@@ -40,7 +40,7 @@ class InsertAnswers implements ShouldQueue
         foreach ($this->data as $record) {
             DB::table('student_answers')->insert([
                 'student_id'=>$this->userId,
-                'question_id'=>$record['id'],
+                'question_id'=>$record['questionId'],
                 'exam_id'=>$this->examId,
                 'answer_hash'=>$record['hash'],
             ]);

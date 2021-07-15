@@ -27,7 +27,6 @@ class ExamController extends Controller
             'title' => 'required',
             'startedAt' => 'required'
         ]);
-
         Lesson::where('id', $lessonId)
             ->where('teacher_id', Auth::id())
             ->firstOrFail();
@@ -36,7 +35,7 @@ class ExamController extends Controller
                 'lesson_id' => $lessonId,
                 'teacher_id' => Auth::id(),
                 'duration' => $request->duration,
-                "description"=>$request->description,
+                "description" => $request->description,
                 'started_at' => Carbon::createFromTimestamp($request->startedAt),
                 'title' => $request->title,
                 'finished_at' => Carbon::createFromTimestamp($request->startedAt)->addMinutes($request->duration)
@@ -78,8 +77,9 @@ class ExamController extends Controller
         $exam = Exam::whereId(1)
             ->with(['questions.answers', 'lesson'])
             ->firstOrFail();
+        $data = QuizResource::collection($exam);
 
-        return new QuizResource($exam);
+        return $this->respondWithTemplate(true, $data);
     }
     function start($lessonId, $examId)
     {
@@ -95,7 +95,8 @@ class ExamController extends Controller
                 'exam_id' => $examId,
                 'started_at' => now()
             ]);
-            return new QuizResource($exam);
+            $data = new QuizResource($exam);
+            return $this->respondWithTemplate(true, $data);
         } catch (\Exception $e) {
             return $this->respondWithTemplate(false, [], $e->getMessage());
         }
@@ -115,16 +116,14 @@ class ExamController extends Controller
         DB::beginTransaction();
 
         try {
-
-            // $examFinishTime = Carbon::parse($exam->finished_at)
-            //     ->addMinutes(Constants::EXAM_EXTRA_TIME);
-            // if (now() > $examFinishTime)
-            //     return $this->respondWithTemplate(false, [], 'too late too late', 406);
+            $service = new ExamService($exam, Auth::id());
+            $service->canUserFinishExam();
             $examSession->update([
                 'finished_at' => now()
             ]);
 
             dispatch(new InsertAnswers($request->answers, Auth::id(), $examId));
+            return $this->respondWithTemplate(true, [], 'امتحان شما با موفقیت ثبت شد');
 
             DB::commit();
         } catch (\Exception $e) {
@@ -133,19 +132,34 @@ class ExamController extends Controller
         }
     }
 
-    function getResult($lessonId, $examId)
+    function result($lessonId, $examId)
     {
         $userId = Auth::id();
+
         $studentAnswers = StudentAnswer::where('student_id', $userId)
             ->where('exam_id', $examId)
             ->pluck('answer_hash');
+
         $correctAnswers = QuestionAnswers::whereIn('hash', $studentAnswers)
             ->sum('is_correct');
-        return $correctAnswers;
+
+        $exam = Exam::whereId($examId)->with('teacher')->firstOrFail();
+
+        $examSession = ExamSession::where('exam_id', $examId)
+            ->where('student_id', $userId)
+            ->whereNotNull('finished_at')
+            ->firstOrFail();
+
+        $data = [
+            'result' => $correctAnswers,
+            'exam' => $exam->title,
+            'teacher' => $exam->teacher->name,
+            'startedAt' => $examSession->started_at->timestamp,
+            'finishedAt' => $examSession->finished_at->timestamp
+        ];
+        return $this->respondWithTemplate(true, $data);
     }
     function allResults($lessonId)
     {
-
     }
 }
-
