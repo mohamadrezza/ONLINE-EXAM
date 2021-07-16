@@ -43,6 +43,8 @@ Route::group(['prefix' => 'lessons'], function () {
         Route::get('/{examId}/start', 'ExamController@start')->middleware('auth');
         Route::post('/{examId}/finish', 'ExamController@finish')->middleware('auth');
         Route::get('/{examId}/result', 'ExamController@result')->middleware('auth');
+        Route::get('/results', 'ExamController@allResults')->middleware('auth');
+
     });
     ###########################################################
 });

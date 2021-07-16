@@ -11,6 +11,7 @@ use App\Helpers\Constants;
 use Illuminate\Http\Request;
 use App\Services\Exam\ExamService;
 use App\Http\Resources\QuizResource;
+use App\Http\Resources\ResultResource;
 use App\Jobs\InsertAnswers;
 use App\QuestionAnswers;
 use App\StudentAnswer;
@@ -129,30 +130,27 @@ class ExamController extends Controller
         }
     }
 
-    function result($lessonId, $examId)
+    public function result($lessonId, $examId)
     {
-        $userId = Auth::id();
-        $result = StudentResult::where('student_id', $userId)
-            ->where('exam_id', $examId)->firstOrFail();
-    
-      
-        $exam = Exam::whereId($examId)->with('teacher')->firstOrFail();
-
-        $examSession = ExamSession::where('exam_id', $examId)
-            ->where('student_id', $userId)
-            ->whereNotNull('finished_at')
-            ->firstOrFail();
-
-        $data = [
-            'result' => $result->result,
-            'exam' => $exam->title,
-            'teacher' => $exam->teacher->name,
-            'startedAt' => $examSession->started_at->timestamp,
-            'finishedAt' => $examSession->finished_at->timestamp
-        ];
-        return $this->respondWithTemplate(true, $data);
+        try {
+            $userId = Auth::id();
+            $result = StudentResult::where('student_id', $userId)
+                ->with('exam.teacher')
+                ->where('exam_id', $examId)->firstOrFail();
+            $data = new ResultResource($result);
+            return $this->respondWithTemplate(true, $data);
+        } catch (\Exception $e) {
+            return $this->respondWithTemplate(false, [], $e->getMessage());
+        }
     }
-    function allResults($lessonId)
+    public function allResults()
     {
+        try {
+            $results = StudentResult::where('student_id', auth()->id())->get();
+            $data =  ResultResource::collection($results);
+            return $this->respondWithTemplate(true, $data);
+        } catch (\Throwable $e) {
+            return $this->respondWithTemplate(false, [], $e->getMessage());
+        }
     }
 }
