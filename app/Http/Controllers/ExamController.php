@@ -14,6 +14,7 @@ use App\Http\Resources\QuizResource;
 use App\Jobs\InsertAnswers;
 use App\QuestionAnswers;
 use App\StudentAnswer;
+use App\StudentResult;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -113,7 +114,6 @@ class ExamController extends Controller
         $examSession = ExamSession::where('exam_id', $examId)
             ->where('student_id', Auth::id())
             ->firstOrFail();
-        DB::beginTransaction();
 
         try {
             $service = new ExamService($exam, Auth::id());
@@ -124,10 +124,7 @@ class ExamController extends Controller
 
             dispatch(new InsertAnswers($request->answers, Auth::id(), $examId));
             return $this->respondWithTemplate(true, [], 'امتحان شما با موفقیت ثبت شد');
-
-            DB::commit();
         } catch (\Exception $e) {
-            DB::rollback();
             return $this->respondWithTemplate(false, [], $e->getMessage());
         }
     }
@@ -135,14 +132,10 @@ class ExamController extends Controller
     function result($lessonId, $examId)
     {
         $userId = Auth::id();
-
-        $studentAnswers = StudentAnswer::where('student_id', $userId)
-            ->where('exam_id', $examId)
-            ->pluck('answer_hash');
-
-        $correctAnswers = QuestionAnswers::whereIn('hash', $studentAnswers)
-            ->sum('is_correct');
-
+        $result = StudentResult::where('student_id', $userId)
+            ->where('exam_id', $examId)->firstOrFail();
+    
+      
         $exam = Exam::whereId($examId)->with('teacher')->firstOrFail();
 
         $examSession = ExamSession::where('exam_id', $examId)
@@ -151,7 +144,7 @@ class ExamController extends Controller
             ->firstOrFail();
 
         $data = [
-            'result' => $correctAnswers,
+            'result' => $result->result,
             'exam' => $exam->title,
             'teacher' => $exam->teacher->name,
             'startedAt' => $examSession->started_at->timestamp,

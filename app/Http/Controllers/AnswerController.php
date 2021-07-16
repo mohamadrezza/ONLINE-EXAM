@@ -9,7 +9,7 @@ use App\Http\Resources\QuestionAnswersResource;
 
 class AnswerController extends Controller
 {
-    function create($id, $questionId, Request $request)
+    public function create($id, $questionId, Request $request)
     {
         $request->validate([
             'answers' => 'required'
@@ -18,11 +18,11 @@ class AnswerController extends Controller
             ->where('user_id', auth()->id())
             ->where('lesson_id', $id)
             ->firstOrFail();
-            
+
         try {
             foreach ($request->answers as $answer) {
                 QuestionAnswers::create([
-                    
+
                     'question_id' => $questionId,
                     'is_correct' => $answer['isCorrect'],
                     'answer' => $answer['answer']
@@ -33,11 +33,12 @@ class AnswerController extends Controller
             return $this->respondWithTemplate(false, [], $e);
         }
     }
-    function get($id, $questionId){
+    public function get($id, $questionId)
+    {
         try {
-            $answers = QuestionAnswers::where('question_id',$questionId)->get();
-            $data=QuestionAnswersResource::collection($answers);
-            return $this->respondWithTemplate(true,$data);
+            $answers = QuestionAnswers::where('question_id', $questionId)->get();
+            $data = QuestionAnswersResource::collection($answers);
+            return $this->respondWithTemplate(true, $data);
         } catch (\Exception $e) {
             return $this->respondWithTemplate(false, [], $e);
         }

@@ -1,10 +1,13 @@
 <?php
 
 use App\Exam;
-use App\Http\Resources\QuizResource;
 use App\User;
 use App\Question;
+use App\StudentResult;
+use App\QuestionAnswers;
+use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
+use App\Http\Resources\QuizResource;
 use Illuminate\Support\Facades\Route;
 
 ####################### Auth ###########################
@@ -42,4 +45,18 @@ Route::group(['prefix' => 'lessons'], function () {
         Route::get('/{examId}/result', 'ExamController@result')->middleware('auth');
     });
     ###########################################################
+});
+Route::get('/test', function () {
+    $data = [
+        ['hash' => '4iVcWt', 'questionId' => '20'],
+        ['hash' => 'hxORjP', 'questionId' => 40]
+    ];
+    
+        StudentResult::create([
+            'exam_id' => 2,
+            'student_id' => 2,
+            'result' => QuestionAnswers::whereIn('question_id', Arr::pluck($data, 'questionId'))
+            ->whereIn('hash', Arr::pluck($data, 'hash'))
+            ->sum('is_correct')
+        ]);
 });

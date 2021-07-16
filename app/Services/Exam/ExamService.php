@@ -22,7 +22,7 @@ class ExamService
 
     function checkExamAvailability()
     {
-        $this->checkTime();
+        // $this->checkTime();
         $this->canUserTakeExam();
     }
     public function canUserFinishExam()

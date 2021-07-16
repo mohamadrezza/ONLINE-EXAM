@@ -25,7 +25,7 @@ class InsertAnswers implements ShouldQueue
      */
     public $tries = 2;
 
-    private $data, $userId, $examId;
+    private $data , $userId, $examId;
     public function __construct($data, $userId, $examId)
     {
         $this->data = $data;
@@ -52,7 +52,7 @@ class InsertAnswers implements ShouldQueue
         StudentResult::create([
             'exam_id' => $this->examId,
             'student_id' => $this->userId,
-            'result' => QuestionAnswers::whereIn('question_id',Arr::pluck($this->data, 'id'))
+            'result' => QuestionAnswers::whereIn('question_id', Arr::pluck($this->data, 'questionId'))
                 ->whereIn('hash', Arr::pluck($this->data, 'hash'))
                 ->sum('is_correct')
         ]);
