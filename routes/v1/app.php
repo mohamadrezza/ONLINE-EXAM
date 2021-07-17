@@ -43,22 +43,8 @@ Route::group(['prefix' => 'lessons'], function () {
         Route::get('/{examId}/start', 'ExamController@start')->middleware('auth');
         Route::post('/{examId}/finish', 'ExamController@finish')->middleware('auth');
         Route::get('/{examId}/result', 'ExamController@result')->middleware('auth');
-        Route::get('/results', 'ExamController@allResults')->middleware('auth');
-
     });
     ###########################################################
 });
-Route::get('/test', function () {
-    $data = [
-        ['hash' => '4iVcWt', 'questionId' => '20'],
-        ['hash' => 'hxORjP', 'questionId' => 40]
-    ];
-    
-        StudentResult::create([
-            'exam_id' => 2,
-            'student_id' => 2,
-            'result' => QuestionAnswers::whereIn('question_id', Arr::pluck($data, 'questionId'))
-            ->whereIn('hash', Arr::pluck($data, 'hash'))
-            ->sum('is_correct')
-        ]);
-});
+Route::get('/results', 'ExamController@allResults')->middleware('auth');
+Route::get('/my-lessons', 'LessonController@getTeacherLessons')->middleware('TeacherRole');

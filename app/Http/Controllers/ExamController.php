@@ -146,7 +146,7 @@ class ExamController extends Controller
     public function allResults()
     {
         try {
-            $results = StudentResult::where('student_id', auth()->id())->get();
+            $results = StudentResult::where('student_id', auth()->id())->paginate(10);
             $data =  ResultResource::collection($results);
             return $this->respondWithTemplate(true, $data);
         } catch (\Throwable $e) {

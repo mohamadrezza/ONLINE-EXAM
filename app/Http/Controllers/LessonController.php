@@ -13,8 +13,7 @@ class LessonController extends Controller
     function getTeacherLessons()
     {
         $lessons = Lesson::where('teacher_id', Auth::id())
-            ->latest('created_at')
-            ->paginate(10);
+            ->get();
 
         return $this->respondWithTemplate(true, $lessons);
     }
