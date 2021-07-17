@@ -78,6 +78,8 @@ class RouteServiceProvider extends ServiceProvider
             ->group(function () {
                 require_once base_path('routes/v1/app.php');
                 require_once base_path('routes/v1/admin.php');
+                require_once base_path('routes/v1/auth.php');
+
             });
 
 

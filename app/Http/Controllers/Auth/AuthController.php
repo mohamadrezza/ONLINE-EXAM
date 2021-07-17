@@ -24,7 +24,7 @@ class AuthController extends Controller
             ]);
             $email = $request->email;
             if (!in_array($request->role, ['student', 'teacher']))
-                return $this->respondWithTemplate(false, null, 'سوزنم فکر میکرد تیزه',406);
+                return $this->respondWithTemplate(false, null, 'سوزنم فکر میکرد تیزه', 406);
 
             if (User::where('email', $email)->exists()) {
                 return $this->respondWithTemplate(false, null, 'این ایمیل توسط کاربر دیگری ثبت شده است ');
@@ -83,5 +83,10 @@ class AuthController extends Controller
         }
 
         return auth()->login($user, true);
+    }
+    public function me()
+    {
+        $user= User::findOrFail(Auth::id());
+        return $this->respondWithTemplate(true, $user);
     }
 }

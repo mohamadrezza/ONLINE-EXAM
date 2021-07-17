@@ -65,6 +65,5 @@ class Kernel extends HttpKernel
         'AdminRole'=>\App\Http\Middleware\AdminRole::class,
         'TeacherRole'=>\App\Http\Middleware\TeacherRole::class,
         'jwt.verify' => \App\Http\Middleware\JwtMiddleware::class,
-
     ];
 }
