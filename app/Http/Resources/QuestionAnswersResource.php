@@ -19,7 +19,7 @@ class QuestionAnswersResource extends JsonResource
             'id' => $this->id,
             'questionId' => $this->question_id,
             'answer' => $this->answer,
-            'createdAt' => $this->is_correct,
+            'isCorrect' => $this->is_correct,
         ];
     }
 }

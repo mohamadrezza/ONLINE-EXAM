@@ -19,13 +19,7 @@ class LessonQuestionsResource extends JsonResource
             'question' => $this->question_text,
             'attachment' => $this->attachment,
             'createdAt' => isset($this->created_at) ? $this->created_at->timestamp : null,
-            'user' => $this->user->name,
-            'answers' => $this->answers->map(function ($i) {
-                return [
-                    'text' => $i->answer,
-                    'isCorrect' => $i->is_correct
-                ];
-            })
+            'user' => $this->user->name
         ];
     }
 }
