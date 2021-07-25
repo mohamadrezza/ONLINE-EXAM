@@ -19,7 +19,8 @@ class LessonQuestionsResource extends JsonResource
             'question' => $this->question_text,
             'attachment' => $this->attachment,
             'createdAt' => isset($this->created_at) ? $this->created_at->timestamp : null,
-            'user' => $this->user->name
+            'user' => $this->user->name,
+            'isAccepted'=>$this->is_accepted
         ];
     }
 }
