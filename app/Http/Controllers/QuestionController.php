@@ -17,13 +17,13 @@ class QuestionController extends Controller
             'question' => 'required|string'
         ]);
         try {
-            Question::create([
+           $question= Question::create([
                 'lesson_id' => $id,
                 'user_id' => auth()->id(),
                 'question_text' => $request->question,
                 'attachment' => $request->attachment
             ]);
-            return $this->respondWithTemplate(true, [], 'سوال شما ثبت شد, درصورت صلاح دید استاد تایید میشود');
+            return $this->respondWithTemplate(true, [], ['questionId'=>$question->id]);
         } catch (\Exception $e) {
             return $this->respondWithTemplate(false, [], $e->getMessage());
         }
