@@ -8,6 +8,7 @@ use App\QuestionAnswers;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use App\Http\Resources\QuizResource;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Route;
 
 ####################### Auth ###########################
@@ -47,5 +48,18 @@ Route::group(['prefix' => 'lessons'], function () {
     });
     ###########################################################
 });
+Route::get('/exams','ExamController@getAll');
 Route::get('/results', 'ExamController@allResults')->middleware('auth');
 Route::get('/my-lessons', 'LessonController@getTeacherLessons')->middleware('TeacherRole');
+Route::get('/test',function(){
+    return Carbon::createFromTimestamp(1632806285);
+    Exam::create([
+        'teacher_id'=>12,
+        'lesson_id'=>1,
+        'title'=>'alaku',
+        'started_at'=>1632806285,
+        'duration'=>60,
+        'finished_at'=>now()->addDay()
+    ]);
+    return 's';
+});

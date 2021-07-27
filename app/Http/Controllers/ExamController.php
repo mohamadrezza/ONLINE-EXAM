@@ -69,8 +69,20 @@ class ExamController extends Controller
     }
 
 
-    function getAll()
+    function getAll(Request $request)
     {
+        $exams = Exam::query()->with('teacher');
+        try {
+            $exams->when($request->title,function($q) use($request){
+                return $q->where('title','like','%'. $request->title. '%');
+        });
+        $data= $exams->orderBy('created_at',$request->order??'desc')
+        ->paginate($request->perPage??20);
+        return $this->respondWithTemplate(true, $data);
+        }
+        catch (\Exception $e) {
+            return $this->respondWithTemplate(false, [], $e->getMessage());
+        }
     }
 
     //teacher only
