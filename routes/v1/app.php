@@ -42,12 +42,17 @@ Route::group(['prefix' => 'lessons'], function () {
     Route::group(['prefix' => '/{id}/exams'], function () {
         Route::post('/', 'ExamController@create')->middleware('TeacherRole');
         Route::post('/{examId}/questions', 'ExamController@selectExamQuestions')->middleware('TeacherRole');
-        Route::get('/{examId}/start', 'ExamController@start')->middleware('auth');
-        Route::post('/{examId}/finish', 'ExamController@finish')->middleware('auth');
-        Route::get('/{examId}/result', 'ExamController@result')->middleware('auth');
+
     });
     ###########################################################
 });
+
+
+Route::get('exams/{examId}/start', 'ExamController@start')->middleware('auth');
+Route::post('exams/{examId}/finish', 'ExamController@finish')->middleware('auth');
+Route::get('exams/{examId}/result', 'ExamController@result')->middleware('auth');
+
+
 Route::get('/exams','ExamController@getAll');
 Route::get('/results', 'ExamController@allResults')->middleware('auth');
 Route::get('/my-lessons', 'LessonController@getTeacherLessons')->middleware('TeacherRole');

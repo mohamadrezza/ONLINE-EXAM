@@ -95,10 +95,9 @@ class ExamController extends Controller
 
         return $this->respondWithTemplate(true, $data);
     }
-    function start($lessonId, $examId)
+    function start($examId)
     {
         $exam = Exam::whereId($examId)
-            ->where('lesson_id', $lessonId)
             ->with(['questions.answers', 'lesson'])
             ->firstOrFail();
         try {
@@ -115,13 +114,12 @@ class ExamController extends Controller
             return $this->respondWithTemplate(false, [], $e->getMessage());
         }
     }
-    function finish($lessonId, $examId, Request $request)
+    function finish($examId, Request $request)
     {
         $request->validate([
             'answers' => 'required|array'
         ]);
         $exam = Exam::whereId($examId)
-            ->where('lesson_id', $lessonId)
             ->firstOrFail();
 
         $examSession = ExamSession::where('exam_id', $examId)
@@ -142,7 +140,7 @@ class ExamController extends Controller
         }
     }
 
-    public function result($lessonId, $examId)
+    public function result($examId)
     {
         try {
             $userId = Auth::id();
