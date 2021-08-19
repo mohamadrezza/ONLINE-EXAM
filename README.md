@@ -5,7 +5,7 @@
   <br>
 </h1>
 
-<h4 align="center">online examination system<a href="http://laravel.com" target="_blank">Laravel</a>.</h4>
+<h4 align="center">online examination system with <a href="http://laravel.com" target="_blank">Laravel</a>.</h4>
 
 ## Description
 you can create exams and set rules for them and students can create questions for them
